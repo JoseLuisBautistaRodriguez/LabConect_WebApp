@@ -1,3 +1,59 @@
 # Documentos Internos de Gestión 
 LabConnect_MLSLC.md
 *.xml 
+
+
+# Node.js dependencies
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Build output
+build/
+dist/
+
+# SvelteKit build output
+.svelte-kit/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Other cache and temporary files
+.cache/
+*.swp
+*.swo
+*.tmp
+
+# Coverage reports
+coverage/
+
+# Svelte testing-related
+*.test.*
+jest.config.js
+cypress/
+cypress.config.js
+
+# Storybook files (if using Storybook)
+.storybook/
+*.stories.svelte
+*.stories.js
+*.stories.ts
