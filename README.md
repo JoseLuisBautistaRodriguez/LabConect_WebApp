@@ -66,9 +66,30 @@ npm install webpack-dev-server --save-dev
 Dentro de _package.json_ en "scripts" el apartado de _"test": "echo \"Error: no test specified\" && exit 1"_ de prueas se enuentra pausada para realizar las pruebas de desarrollo, build y start deben cambiar su estado al momento dde estar en producción. 
 Las pruebas de funcionamiento pasan por:
 ```bash 
-npm run buidl
+npm run build
 ```
 y después: 
 ```bash
 npm run start
+```
+Instalación de las dependenccias para el uso de la base de datos: 
+```bash
+npm init -y
+npm iinstall express mysql12 cors body-parser
+```
+
+Es necesario teneer instalado el complemento de mysql2: 
+```bash
+npm install mysql2
+```
+
+Inicializacion del servidor:
+```bash
+node server.js
+```
+
+Version LTS - Lng-Term Support de Node.js:
+```bash
+nvm install --lts
+nvm use --lts 
 ```

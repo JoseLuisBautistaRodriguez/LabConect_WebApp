@@ -1,9 +1,11 @@
 <script>
 	let poblacionInicial = ""; // Dato ingresado en el formulario
 	let datosEntrada = []; // Almacena los datos enviados
-	let datosSalida = []; // Almacena los datos recibidos de la ventana secundaria
+	let datosSalida = []; // Almacena los datos recibidos del servidor
+	let idEntrada = null; // Almacena el ID de entrada generado
+	let esperandoDatos = false; // Indica si estamos esperando datos de salida
   
-	const enviarDatos = () => {
+	const enviarDatos = async () => {
 	  if (!poblacionInicial) {
 		alert("Por favor, ingresa la población inicial.");
 		return;
@@ -12,55 +14,86 @@
 	  // Generar datos de entrada basados en la población inicial
 	  const anios = Array.from({ length: 11 }, (_, i) => i * 10); // [0, 10, 20, ..., 100]
 	  const tasaCrecimiento = 0.2; // Tasa de crecimiento fija para este ejemplo
-	  const poblacion = anios.map((anio) => Math.round(poblacionInicial * (1 + tasaCrecimiento) ** (anio / 10)));
+	  const poblacion = anios.map((anio) =>
+		Math.round(poblacionInicial * (1 + tasaCrecimiento) ** (anio / 10))
+	  );
   
 	  datosEntrada = { anios, poblacion }; // Almacena los datos generados localmente
   
-	  // Crear una nueva ventana para enviar los datos
-	  const nuevaVentana = window.open(
-		"/ventana-secundaria",
-		"_blank",
-		"width=800,height=600"
-	  );
+	  try {
+		// Enviar datos de entrada al backend
+		const responseEntrada = await fetch("http://localhost:3000/guardar-entrada", {
+		  method: "POST",
+		  headers: {
+			"Content-Type": "application/json",
+		  },
+		  body: JSON.stringify({ poblacionInicial: parseInt(poblacionInicial) }),
+		});
   
-	  // Enviar datos en formato XML
-	  const xmlData = `
-		<?xml version="1.0" encoding="UTF-8"?>
-		<resultados>
-		  <anios>${anios.join(" ")}</anios>
-		  <poblacion>${poblacion.join(" ")}</poblacion>
-		</resultados>
-	  `;
-	  nuevaVentana.onload = () => {
-		nuevaVentana.postMessage(xmlData, "*");
-	  };
+		if (!responseEntrada.ok) {
+		  throw new Error("Error al enviar los datos de entrada");
+		}
+  
+		const { idEntrada: id } = await responseEntrada.json();
+		idEntrada = id; // Guardar el ID de entrada
+  
+		// Iniciar polling para verificar datos de salida
+		esperandoDatos = true;
+		consultarDatosSalida();
+	  } catch (error) {
+		console.error("Error:", error);
+		alert("Hubo un error al enviar los datos al servidor.");
+	  }
   
 	  // Limpiar el formulario
 	  poblacionInicial = "";
 	};
   
-	// Escuchar datos de la ventana secundaria
-	window.addEventListener("message", (event) => {
-	  if (event.data) {
-		// Parsear datos recibidos como XML
-		const parser = new DOMParser();
-		const xmlDoc = parser.parseFromString(event.data, "text/xml");
+	const consultarDatosSalida = async () => {
+	  if (!idEntrada) return;
   
-		const anios = xmlDoc.getElementsByTagName("anios")[0]?.textContent.split(" ") || [];
-		const poblacion = xmlDoc.getElementsByTagName("poblacion")[0]?.textContent.split(" ") || [];
+	  try {
+		const response = await fetch(`http://localhost:3000/consultar-salida/${idEntrada}`);
+		if (!response.ok) {
+		  throw new Error("Error al consultar datos de salida");
+		}
   
-		datosSalida = { anios, poblacion }; // Actualiza los datos de salida
+		const data = await response.json();
+  
+		if (data) {
+		  // Si hay datos de salida, actualizar la interfaz
+		  const anios = data.datos_xml
+			.match(/<anios>(.*?)<\/anios>/)[1]
+			.trim() // Elimina espacios al inicio y al final de la cadena
+			.replace(/\s+/g, " ") // Reemplaza múltiples espacios consecutivos por un único espacio
+			.split(" "); // Divide por un único espacio
+
+		  const poblacion = data.datos_xml
+			.match(/<poblacion>(.*?)<\/poblacion>/)[1]
+			.trim() // Elimina espacios al inicio y al final de la cadena
+			.replace(/\s+/g, " ") // Reemplaza múltiples espacios consecutivos por un único espacio
+			.split(" "); // Divide por un único espacio
+
+		  datosSalida = { anios, poblacion };
+		  esperandoDatos = false; // Detener el polling
+		} else {
+		  // Si no hay datos, volver a consultar en 5 segundos
+		  setTimeout(consultarDatosSalida, 5000);
+		}
+	  } catch (error) {
+		console.error("Error:", error);
+		esperandoDatos = false; // Detener el polling en caso de error
 	  }
-	});
+	};
 </script>
-
-<style>
-	
-
-</style>
-
-
-<main>
+  
+ 
+  
+  <style>
+	/* Tus estilos aquí */
+  </style>
+  
+  <main>
 	<!-- Encabezado -->
 	<aside>
 	  <h1>LabConnect SMC</h1>
@@ -71,7 +104,7 @@
 	<div class="container">
 	  <!-- Formulario -->
 	  <div class="formulario">
-		<h2 text-aling="center" >Formulario</h2>
+		<h2 text-aling="center">Formulario</h2>
 		<form on:submit|preventDefault={enviarDatos}>
 		  <label>
 			Población inicial:
@@ -140,7 +173,4 @@
 		</table>
 	  </div>
 	</div>
-
-</main>
-  
-  
+  </main>
