@@ -1,10 +1,14 @@
 using System.Net.Http;
 using System.Xml;
+using MySql.Data.MySqlClient;
 
 namespace LabConnect
 {
+
     public partial class LabConnect_frm : Form
     {
+        // Cadena de conexión a la base de datos
+        private string connectionString = "Server=localhost;Database=labconnect_smc;Uid=root;Pwd=24445;";
         public LabConnect_frm()
         {
             InitializeComponent();
@@ -41,6 +45,7 @@ namespace LabConnect
             groupBoxConexion.Controls.Add(txtVariable);
 
         }
+
 
         private async void btnConectar_Click(object sender, EventArgs e)
             {
@@ -223,8 +228,55 @@ namespace LabConnect
 
         private void btnActualiarDatos_Click(object sender, EventArgs e)
         {
-            // Llama a la función para refrescar los datos
-            MostrarDatosExtraidos();
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Consulta para obtener el último registro de datos_entrada sin referencia en datos_salida
+                    string query = @"
+                SELECT de.id, de.poblacion_inicial, de.fecha_solicitud
+                FROM datos_entrada de
+                LEFT JOIN datos_salida ds ON de.id = ds.id_entrada
+                WHERE ds.id_entrada IS NULL
+                ORDER BY de.id DESC
+                LIMIT 1;";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            // Obtener los datos del registro
+                            int id = reader.GetInt32("id");
+                            int poblacionInicial = reader.GetInt32("poblacion_inicial");
+                            DateTime fechaSolicitud = reader.GetDateTime("fecha_solicitud");
+
+                            // Actualizar la interfaz con los datos obtenidos
+                            lstDatosExtraidos.Items.Clear();
+                            lstDatosExtraidos.Items.Add(new ListViewItem(new[] { "ID", id.ToString() }));
+                            lstDatosExtraidos.Items.Add(new ListViewItem(new[] { "Población Inicial", poblacionInicial.ToString() }));
+                            lstDatosExtraidos.Items.Add(new ListViewItem(new[] { "Fecha de Solicitud", fechaSolicitud.ToString() }));
+
+                            lblEstadoConexion.Text = "Datos actualizados correctamente.";
+                            lblEstadoConexion.ForeColor = Color.DarkGreen;
+                        }
+                        else
+                        {
+                            lblEstadoConexion.Text = "No hay registros pendientes en datos_entrada.";
+                            lblEstadoConexion.ForeColor = Color.DarkOrange;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lblEstadoConexion.Text = $"Error al actualizar los datos: {ex.Message}";
+                lblEstadoConexion.ForeColor = Color.DarkRed;
+            }
         }
+
     }
 }

@@ -70,7 +70,7 @@
             // lblEstadoConexion
             // 
             lblEstadoConexion.AutoSize = true;
-            lblEstadoConexion.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblEstadoConexion.Font = new Font("Consolas", 9F);
             lblEstadoConexion.ForeColor = SystemColors.WindowFrame;
             lblEstadoConexion.Location = new Point(6, 160);
             lblEstadoConexion.Name = "lblEstadoConexion";
@@ -110,13 +110,12 @@
             // txtURL
             // 
             txtURL.AcceptsTab = true;
-            txtURL.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point);
+            txtURL.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
             txtURL.ForeColor = SystemColors.WindowFrame;
             txtURL.Location = new Point(50, 69);
             txtURL.Name = "txtURL";
             txtURL.Size = new Size(462, 27);
             txtURL.TabIndex = 4;
-            txtURL.Text = "Introduce el sitio web";
             txtURL.TextChanged += txtURL_TextChanged;
             // 
             // label2
@@ -130,7 +129,7 @@
             // 
             // txtVariable
             // 
-            txtVariable.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point);
+            txtVariable.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
             txtVariable.ForeColor = SystemColors.WindowFrame;
             txtVariable.Location = new Point(174, 108);
             txtVariable.Name = "txtVariable";
@@ -152,7 +151,7 @@
             // coneccionalsitio
             // 
             coneccionalsitio.AutoSize = true;
-            coneccionalsitio.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            coneccionalsitio.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             coneccionalsitio.Location = new Point(18, 42);
             coneccionalsitio.Name = "coneccionalsitio";
             coneccionalsitio.Size = new Size(185, 28);
@@ -184,7 +183,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            label5.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold | FontStyle.Italic);
             label5.Location = new Point(18, 12);
             label5.Name = "label5";
             label5.Size = new Size(189, 20);

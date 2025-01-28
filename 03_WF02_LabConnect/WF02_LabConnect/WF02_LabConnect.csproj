@@ -6,11 +6,6 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UseWindowsFormsDesigner>true</UseWindowsFormsDesigner>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="9.2.0" />
-  </ItemGroup>
 
 </Project>
