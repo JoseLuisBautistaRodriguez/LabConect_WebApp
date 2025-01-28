@@ -2,6 +2,8 @@
 	let poblacionInicial = ""; // Dato ingresado en el formulario
 	let datosEntrada = []; // Almacena los datos enviados
 	let datosSalida = []; // Almacena los datos recibidos del servidor
+	let idEntrada = null; // Almacena el ID de entrada generado
+	let esperandoDatos = false; // Indica si estamos esperando datos de salida
   
 	const enviarDatos = async () => {
 	  if (!poblacionInicial) {
@@ -18,47 +20,64 @@
   
 	  datosEntrada = { anios, poblacion }; // Almacena los datos generados localmente
   
-	  // Crear el XML
-	  const xmlData = `
-		<?xml version="1.0" encoding="UTF-8"?>
-		<resultados>
-		  <anios>${anios.join(" ")}</anios>
-		  <poblacion>${poblacion.join(" ")}</poblacion>
-		</resultados>
-	  `;
-  
 	  try {
-		// Enviar datos al servidor
-		const response = await fetch("http://localhost:8080/datos.xml", {
+		// Enviar datos de entrada al backend
+		const responseEntrada = await fetch("http://localhost:3000/guardar-entrada", {
 		  method: "POST",
 		  headers: {
-			"Content-Type": "application/xml", // Indicar que enviamos XML
+			"Content-Type": "application/json",
 		  },
-		  body: xmlData, // Enviar el XML como cuerpo de la solicitud
+		  body: JSON.stringify({ poblacionInicial: parseInt(poblacionInicial) }),
 		});
   
-		if (!response.ok) {
-		  throw new Error("Error al enviar los datos al servidor en A");
+		if (!responseEntrada.ok) {
+		  throw new Error("Error al enviar los datos de entrada");
 		}
   
-		// Si el servidor devuelve una respuesta, procesarla
-		const responseData = await response.text();
-		const parser = new DOMParser();
-		const xmlDoc = parser.parseFromString(responseData, "text/xml");
+		const { idEntrada: id } = await responseEntrada.json();
+		idEntrada = id; // Guardar el ID de entrada
   
-		const aniosRespuesta = xmlDoc.getElementsByTagName("anios")[0]?.textContent.split(" ") || [];
-		const poblacionRespuesta = xmlDoc.getElementsByTagName("poblacion")[0]?.textContent.split(" ") || [];
-  
-		datosSalida = { anios: aniosRespuesta, poblacion: poblacionRespuesta }; // Actualizar datos de salida
+		// Iniciar polling para verificar datos de salida
+		esperandoDatos = true;
+		consultarDatosSalida();
 	  } catch (error) {
 		console.error("Error:", error);
-		alert("Hubo un error al enviar los datos al servidor. en B");
+		alert("Hubo un error al enviar los datos al servidor.");
 	  }
   
 	  // Limpiar el formulario
 	  poblacionInicial = "";
 	};
-  </script>
+  
+	const consultarDatosSalida = async () => {
+	  if (!idEntrada) return;
+  
+	  try {
+		const response = await fetch(`http://localhost:3000/consultar-salida/${idEntrada}`);
+		if (!response.ok) {
+		  throw new Error("Error al consultar datos de salida");
+		}
+  
+		const data = await response.json();
+  
+		if (data) {
+		  // Si hay datos de salida, actualizar la interfaz
+		  const anios = data.datos_xml.match(/<anios>(.*?)<\/anios>/)[1].split(" ");
+		  const poblacion = data.datos_xml.match(/<poblacion>(.*?)<\/poblacion>/)[1].split(" ");
+		  datosSalida = { anios, poblacion };
+		  esperandoDatos = false; // Detener el polling
+		} else {
+		  // Si no hay datos, volver a consultar en 5 segundos
+		  setTimeout(consultarDatosSalida, 5000);
+		}
+	  } catch (error) {
+		console.error("Error:", error);
+		esperandoDatos = false; // Detener el polling en caso de error
+	  }
+	};
+</script>
+  
+ 
   
   <style>
 	/* Tus estilos aquí */

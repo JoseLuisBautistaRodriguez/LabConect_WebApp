@@ -72,7 +72,24 @@ y después:
 ```bash
 npm run start
 ```
-Node.js express:
+Instalación de las dependenccias para el uso de la base de datos: 
 ```bash
-npm install express
+npm init -y
+npm iinstall express mysql12 cors body-parser
+```
+
+Es necesario teneer instalado el complemento de mysql2: 
+```bash
+npm install mysql2
+```
+
+Inicializacion del servidor:
+```bash
+node server.js
+```
+
+Version LTS - Lng-Term Support de Node.js:
+```bash
+nvm install --lts
+nvm use --lts 
 ```

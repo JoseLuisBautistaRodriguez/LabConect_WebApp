@@ -1,44 +1,71 @@
 const express = require("express");
+const mysql = require("mysql2");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
-const app = require("express")();
-const PORT = 3000;
+const app = express();
+const port = 3000;
 
-// Verificar si el puerto está disponible
-const server = app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+
+// Conexión a MySQL
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "root", // Usuario de MySQL
+  password: "24445", // Contraseña de MySQL
+  database: "labconnect_smc",
 });
 
-server.on("error", (err) => {
-  if (err.code === "EADDRINUSE") {
-    console.error(`El puerto ${PORT} está ocupado. Usa otro puerto.`);
-  } else {
-    console.error(err);
+connection.connect((err) => {
+  if (err) {
+    console.error("Error conectando a MySQL:", err);
+    return;
   }
+  console.log("Conectado a MySQL");
 });
 
-// Ruta para devolver el archivo XML
-app.get("/data.xml", (req, res) => {
-  const tasaCrecimiento = 0.2;
-  const poblacionInicial = 1000; // Cambiar según tu lógica
-  const anios = Array.from({ length: 11 }, (_, i) => i * 10);
-  const poblacion = anios.map((anio) => Math.round(poblacionInicial * (1 + tasaCrecimiento) ** (anio / 10)));
+// Ruta para guardar datos de entrada
+app.post("/guardar-entrada", (req, res) => {
+  const { poblacionInicial } = req.body;
 
-  const xmlResponse = `
-    <?xml version="1.0" encoding="UTF-8"?>
-    <resultados>
-      <anios>${anios.join(" ")}</anios>
-      <poblacion>${poblacion.join(" ")}</poblacion>
-    </resultados>
-  `;
+  if (!poblacionInicial) {
+    return res.status(400).json({ error: "Población inicial es requerida" });
+  }
 
-  res.set("Content-Type", "application/xml");
-  res.send(xmlResponse);
+  const query = "INSERT INTO datos_entrada (poblacion_inicial) VALUES (?)";
+  connection.query(query, [poblacionInicial], (err, results) => {
+    if (err) {
+      console.error("Error insertando en datos_entrada:", err);
+      return res.status(500).json({ error: "Error en el servidor" });
+    }
+
+    const idEntrada = results.insertId;
+    res.json({ idEntrada });
+  });
 });
 
-// Sirve los archivos de tu aplicación Svelte
-app.use(express.static("public")); // Asegúrate de que `public` contenga tu aplicación Svelte compilada
+// Ruta para consultar datos de salida
+app.get("/consultar-salida/:idEntrada", (req, res) => {
+  const { idEntrada } = req.params;
 
-// Inicia el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  const query = "SELECT * FROM datos_salida WHERE id_entrada = ?";
+  connection.query(query, [idEntrada], (err, results) => {
+    if (err) {
+      console.error("Error consultando datos_salida:", err);
+      return res.status(500).json({ error: "Error en el servidor" });
+    }
+
+    if (results.length > 0) {
+      res.json(results[0]); // Devuelve el primer resultado (si existe)
+    } else {
+      res.json(null); // No hay datos de salida aún
+    }
+  });
+});
+
+// Iniciar el servidor
+app.listen(port, () => {
+  console.log(`Servidor backend corriendo en http://localhost:${port}`);
 });
