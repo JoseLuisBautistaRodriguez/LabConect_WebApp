@@ -66,9 +66,13 @@ npm install webpack-dev-server --save-dev
 Dentro de _package.json_ en "scripts" el apartado de _"test": "echo \"Error: no test specified\" && exit 1"_ de prueas se enuentra pausada para realizar las pruebas de desarrollo, build y start deben cambiar su estado al momento dde estar en producción. 
 Las pruebas de funcionamiento pasan por:
 ```bash 
-npm run buidl
+npm run build
 ```
 y después: 
 ```bash
 npm run start
+```
+Node.js express:
+```bash
+npm install express
 ```

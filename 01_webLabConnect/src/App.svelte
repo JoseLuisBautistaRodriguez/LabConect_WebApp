@@ -1,9 +1,9 @@
 <script>
 	let poblacionInicial = ""; // Dato ingresado en el formulario
 	let datosEntrada = []; // Almacena los datos enviados
-	let datosSalida = []; // Almacena los datos recibidos de la ventana secundaria
+	let datosSalida = []; // Almacena los datos recibidos del servidor
   
-	const enviarDatos = () => {
+	const enviarDatos = async () => {
 	  if (!poblacionInicial) {
 		alert("Por favor, ingresa la población inicial.");
 		return;
@@ -12,18 +12,13 @@
 	  // Generar datos de entrada basados en la población inicial
 	  const anios = Array.from({ length: 11 }, (_, i) => i * 10); // [0, 10, 20, ..., 100]
 	  const tasaCrecimiento = 0.2; // Tasa de crecimiento fija para este ejemplo
-	  const poblacion = anios.map((anio) => Math.round(poblacionInicial * (1 + tasaCrecimiento) ** (anio / 10)));
+	  const poblacion = anios.map((anio) =>
+		Math.round(poblacionInicial * (1 + tasaCrecimiento) ** (anio / 10))
+	  );
   
 	  datosEntrada = { anios, poblacion }; // Almacena los datos generados localmente
   
-	  // Crear una nueva ventana para enviar los datos
-	  const nuevaVentana = window.open(
-		"/ventana-secundaria",
-		"_blank",
-		"width=800,height=600"
-	  );
-  
-	  // Enviar datos en formato XML
+	  // Crear el XML
 	  const xmlData = `
 		<?xml version="1.0" encoding="UTF-8"?>
 		<resultados>
@@ -31,36 +26,45 @@
 		  <poblacion>${poblacion.join(" ")}</poblacion>
 		</resultados>
 	  `;
-	  nuevaVentana.onload = () => {
-		nuevaVentana.postMessage(xmlData, "*");
-	  };
+  
+	  try {
+		// Enviar datos al servidor
+		const response = await fetch("http://localhost:8080/datos.xml", {
+		  method: "POST",
+		  headers: {
+			"Content-Type": "application/xml", // Indicar que enviamos XML
+		  },
+		  body: xmlData, // Enviar el XML como cuerpo de la solicitud
+		});
+  
+		if (!response.ok) {
+		  throw new Error("Error al enviar los datos al servidor en A");
+		}
+  
+		// Si el servidor devuelve una respuesta, procesarla
+		const responseData = await response.text();
+		const parser = new DOMParser();
+		const xmlDoc = parser.parseFromString(responseData, "text/xml");
+  
+		const aniosRespuesta = xmlDoc.getElementsByTagName("anios")[0]?.textContent.split(" ") || [];
+		const poblacionRespuesta = xmlDoc.getElementsByTagName("poblacion")[0]?.textContent.split(" ") || [];
+  
+		datosSalida = { anios: aniosRespuesta, poblacion: poblacionRespuesta }; // Actualizar datos de salida
+	  } catch (error) {
+		console.error("Error:", error);
+		alert("Hubo un error al enviar los datos al servidor. en B");
+	  }
   
 	  // Limpiar el formulario
 	  poblacionInicial = "";
 	};
+  </script>
   
-	// Escuchar datos de la ventana secundaria
-	window.addEventListener("message", (event) => {
-	  if (event.data) {
-		// Parsear datos recibidos como XML
-		const parser = new DOMParser();
-		const xmlDoc = parser.parseFromString(event.data, "text/xml");
+  <style>
+	/* Tus estilos aquí */
+  </style>
   
-		const anios = xmlDoc.getElementsByTagName("anios")[0]?.textContent.split(" ") || [];
-		const poblacion = xmlDoc.getElementsByTagName("poblacion")[0]?.textContent.split(" ") || [];
-  
-		datosSalida = { anios, poblacion }; // Actualiza los datos de salida
-	  }
-	});
-</script>
-
-<style>
-	
-
-</style>
-
-
-<main>
+  <main>
 	<!-- Encabezado -->
 	<aside>
 	  <h1>LabConnect SMC</h1>
@@ -71,7 +75,7 @@
 	<div class="container">
 	  <!-- Formulario -->
 	  <div class="formulario">
-		<h2 text-aling="center" >Formulario</h2>
+		<h2 text-aling="center">Formulario</h2>
 		<form on:submit|preventDefault={enviarDatos}>
 		  <label>
 			Población inicial:
@@ -140,7 +144,4 @@
 		</table>
 	  </div>
 	</div>
-
-</main>
-  
-  
+  </main>
