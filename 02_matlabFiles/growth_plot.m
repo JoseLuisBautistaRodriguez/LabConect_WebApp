@@ -1,31 +1,34 @@
-function resultados = growth_plot(input_file, file_format)
+function resultados = growth_plot(input_file)
     % growth_plot - Genera una gráfica de crecimiento poblacional a 100 años
+    % a partir de un archivo XML con un único valor de población inicial.
     % Parámetros:
     %   input_file (string): Nombre del archivo de entrada (XML).
-    %   file_format (string): Formato del archivo ('xml').
     % Salida:
     %   resultados: Estructura con datos de entrada y salida.
 
-    % Validar formato (solo acepta XML en este ajuste)
-    %if nargin < 2 || isempty(file_format) || ~strcmp(file_format, 'xml')
-    %    error('Formato inválido. Este código solo soporta archivos en formato ''xml''.');
-    %end
-
     % Verificar si el archivo existe
     if nargin < 1 || isempty(input_file) || ~isfile(input_file)
-        disp('Archivo no encontrado. Generando datos aleatorios preestablecidos...');
-        % Generar datos aleatorios entre 1000 y 5000 como valores iniciales
-        anios = 0:10:100;
-        poblacion_inicial = randi([1000, 5000], 1); % Población inicial
-        tasa_crecimiento = rand() * 0.05 + 0.01; % Tasa de crecimiento entre 1% y 6%
-        poblacion = poblacion_inicial * (1 + tasa_crecimiento).^(anios / 10);
-    else
-        % Leer datos desde el archivo XML
-        disp(['Cargando datos desde ', input_file, '...']);
-        xml_data = xmlread(input_file);
-        anios = str2num(char(xml_data.getElementsByTagName('anios').item(0).getTextContent())); %#ok<ST2NM>
-        poblacion = str2num(char(xml_data.getElementsByTagName('poblacion').item(0).getTextContent())); %#ok<ST2NM>
+        error('El archivo de entrada no fue encontrado. Proporcione un archivo válido.');
     end
+
+    % Leer el archivo XML de entrada
+    disp(['Cargando datos desde ', input_file, '...']);
+    xml_data = xmlread(input_file);
+
+    % Obtener el valor de la población inicial
+    poblacion_inicial_node = xml_data.getElementsByTagName('poblacion').item(0);
+    if isempty(poblacion_inicial_node)
+        error('El archivo de entrada no contiene un nodo de población inicial.');
+    end
+    poblacion_inicial = str2double(poblacion_inicial_node.getTextContent());
+    if isnan(poblacion_inicial)
+        error('El valor de población inicial no es un número válido.');
+    end
+
+    % Calcular los datos para 100 años
+    anios = 0:10:100; % Intervalos de 10 años
+    tasa_crecimiento = 0.02; % Tasa de crecimiento fija (2%)
+    poblacion = poblacion_inicial * (1 + tasa_crecimiento).^(anios / 10);
 
     % Graficar los datos
     figure;
@@ -39,7 +42,7 @@ function resultados = growth_plot(input_file, file_format)
     resultados.anios = anios;
     resultados.poblacion = poblacion;
 
-    % Guardar resultados en archivo XML
+    % Generar el archivo XML de salida
     output_file = 'resultados.xml';
     docNode = com.mathworks.xml.XMLUtils.createDocument('resultados');
     root = docNode.getDocumentElement;
@@ -54,7 +57,7 @@ function resultados = growth_plot(input_file, file_format)
     poblacion_node.appendChild(docNode.createTextNode(num2str(poblacion)));
     root.appendChild(poblacion_node);
 
-    % Escribir archivo XML
+    % Escribir el archivo XML
     xmlwrite(output_file, docNode);
     disp(['Resultados guardados en ', output_file, '.']);
 end

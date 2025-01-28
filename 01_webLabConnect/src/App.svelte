@@ -62,8 +62,18 @@
   
 		if (data) {
 		  // Si hay datos de salida, actualizar la interfaz
-		  const anios = data.datos_xml.match(/<anios>(.*?)<\/anios>/)[1].split(" ");
-		  const poblacion = data.datos_xml.match(/<poblacion>(.*?)<\/poblacion>/)[1].split(" ");
+		  const anios = data.datos_xml
+			.match(/<anios>(.*?)<\/anios>/)[1]
+			.trim() // Elimina espacios al inicio y al final de la cadena
+			.replace(/\s+/g, " ") // Reemplaza múltiples espacios consecutivos por un único espacio
+			.split(" "); // Divide por un único espacio
+
+		  const poblacion = data.datos_xml
+			.match(/<poblacion>(.*?)<\/poblacion>/)[1]
+			.trim() // Elimina espacios al inicio y al final de la cadena
+			.replace(/\s+/g, " ") // Reemplaza múltiples espacios consecutivos por un único espacio
+			.split(" "); // Divide por un único espacio
+
 		  datosSalida = { anios, poblacion };
 		  esperandoDatos = false; // Detener el polling
 		} else {

@@ -48,8 +48,25 @@
             btnActualizarDatos = new Button();
             listBoxUltimosDatos = new ListBox();
             labelG2Texto = new Label();
+            groupBox2 = new GroupBox();
+            listBoxResultados = new ListView();
+            label7 = new Label();
+            labelEstadoMatlab = new Label();
+            buttonProcesarMatlab = new Button();
+            buttonGuardarDatos = new Button();
+            textBoxRutaResultados = new TextBox();
+            textBoxRutaMatlab = new TextBox();
+            label5 = new Label();
+            label4 = new Label();
+            label3 = new Label();
+            textBoxRutaEntrada = new TextBox();
+            groupBoxActualizarBD = new GroupBox();
+            labelEstadoActualizarBD = new Label();
+            btnActualizarBD = new Button();
             groupBox1.SuspendLayout();
             groupBoxUltimosDatos.SuspendLayout();
+            groupBox2.SuspendLayout();
+            groupBoxActualizarBD.SuspendLayout();
             SuspendLayout();
             // 
             // linkLabel1
@@ -236,6 +253,7 @@
             listBoxUltimosDatos.Name = "listBoxUltimosDatos";
             listBoxUltimosDatos.Size = new Size(427, 84);
             listBoxUltimosDatos.TabIndex = 1;
+            listBoxUltimosDatos.SelectedIndexChanged += listBoxUltimosDatos_SelectedIndexChanged;
             // 
             // labelG2Texto
             // 
@@ -246,11 +264,172 @@
             labelG2Texto.TabIndex = 0;
             labelG2Texto.Text = "Últimos datos de entrada:";
             // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(listBoxResultados);
+            groupBox2.Controls.Add(label7);
+            groupBox2.Controls.Add(labelEstadoMatlab);
+            groupBox2.Controls.Add(buttonProcesarMatlab);
+            groupBox2.Controls.Add(buttonGuardarDatos);
+            groupBox2.Controls.Add(textBoxRutaResultados);
+            groupBox2.Controls.Add(textBoxRutaMatlab);
+            groupBox2.Controls.Add(label5);
+            groupBox2.Controls.Add(label4);
+            groupBox2.Controls.Add(label3);
+            groupBox2.Controls.Add(textBoxRutaEntrada);
+            groupBox2.Location = new Point(467, 17);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(577, 409);
+            groupBox2.TabIndex = 5;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Matlab";
+            // 
+            // listBoxResultados
+            // 
+            listBoxResultados.ImeMode = ImeMode.NoControl;
+            listBoxResultados.Location = new Point(6, 280);
+            listBoxResultados.Name = "listBoxResultados";
+            listBoxResultados.Size = new Size(557, 107);
+            listBoxResultados.TabIndex = 10;
+            listBoxResultados.UseCompatibleStateImageBehavior = false;
+            listBoxResultados.View = View.List;
+            listBoxResultados.SelectedIndexChanged += listBoxResultados_SelectedIndexChanged;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(6, 255);
+            label7.Name = "label7";
+            label7.Size = new Size(133, 20);
+            label7.TabIndex = 9;
+            label7.Text = "Datos Procesados:";
+            // 
+            // labelEstadoMatlab
+            // 
+            labelEstadoMatlab.AutoSize = true;
+            labelEstadoMatlab.Font = new Font("Consolas", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            labelEstadoMatlab.Location = new Point(6, 239);
+            labelEstadoMatlab.Name = "labelEstadoMatlab";
+            labelEstadoMatlab.Size = new Size(203, 15);
+            labelEstadoMatlab.TabIndex = 8;
+            labelEstadoMatlab.Text = "Estado del proceso de Matlab";
+            // 
+            // buttonProcesarMatlab
+            // 
+            buttonProcesarMatlab.Location = new Point(384, 198);
+            buttonProcesarMatlab.Name = "buttonProcesarMatlab";
+            buttonProcesarMatlab.Size = new Size(179, 38);
+            buttonProcesarMatlab.TabIndex = 7;
+            buttonProcesarMatlab.Text = "Procesar en Matlab";
+            buttonProcesarMatlab.UseVisualStyleBackColor = true;
+            buttonProcesarMatlab.Click += buttonProcesarMatlab_Click;
+            // 
+            // buttonGuardarDatos
+            // 
+            buttonGuardarDatos.Location = new Point(199, 198);
+            buttonGuardarDatos.Name = "buttonGuardarDatos";
+            buttonGuardarDatos.Size = new Size(179, 38);
+            buttonGuardarDatos.TabIndex = 6;
+            buttonGuardarDatos.Text = "Guardar Datos";
+            buttonGuardarDatos.UseVisualStyleBackColor = true;
+            buttonGuardarDatos.Click += buttonGuardarDatos_Click;
+            // 
+            // textBoxRutaResultados
+            // 
+            textBoxRutaResultados.Font = new Font("Segoe UI Semibold", 8F, FontStyle.Bold);
+            textBoxRutaResultados.ForeColor = SystemColors.WindowFrame;
+            textBoxRutaResultados.Location = new Point(6, 165);
+            textBoxRutaResultados.Name = "textBoxRutaResultados";
+            textBoxRutaResultados.Size = new Size(557, 25);
+            textBoxRutaResultados.TabIndex = 5;
+            textBoxRutaResultados.Text = "C:\\xampp\\htdocs\\04_LR_Connect\\LabConect_WebApp\\02_matlabFiles\\resultados.xml";
+            // 
+            // textBoxRutaMatlab
+            // 
+            textBoxRutaMatlab.Font = new Font("Segoe UI Semibold", 8F, FontStyle.Bold);
+            textBoxRutaMatlab.ForeColor = SystemColors.WindowFrame;
+            textBoxRutaMatlab.Location = new Point(6, 112);
+            textBoxRutaMatlab.Name = "textBoxRutaMatlab";
+            textBoxRutaMatlab.Size = new Size(557, 25);
+            textBoxRutaMatlab.TabIndex = 4;
+            textBoxRutaMatlab.Text = "C:\\xampp\\htdocs\\04_LR_Connect\\LabConect_WebApp\\02_matlabFiles\\growth_plot.m";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(6, 142);
+            label5.Name = "label5";
+            label5.Size = new Size(219, 20);
+            label5.TabIndex = 3;
+            label5.Text = "Ruta del archivo de resultados:";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(6, 86);
+            label4.Name = "label4";
+            label4.Size = new Size(214, 20);
+            label4.TabIndex = 2;
+            label4.Text = "Ruta del archivo de ejecución:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(6, 33);
+            label3.Name = "label3";
+            label3.Size = new Size(202, 20);
+            label3.TabIndex = 1;
+            label3.Text = "Ruta del archivo de entrada:";
+            // 
+            // textBoxRutaEntrada
+            // 
+            textBoxRutaEntrada.Font = new Font("Segoe UI Semibold", 8F, FontStyle.Bold);
+            textBoxRutaEntrada.ForeColor = SystemColors.WindowFrame;
+            textBoxRutaEntrada.Location = new Point(6, 56);
+            textBoxRutaEntrada.Name = "textBoxRutaEntrada";
+            textBoxRutaEntrada.Size = new Size(557, 25);
+            textBoxRutaEntrada.TabIndex = 0;
+            textBoxRutaEntrada.Text = "C:\\xampp\\htdocs\\04_LR_Connect\\LabConect_WebApp\\02_matlabFiles\\datos.xml";
+            // 
+            // groupBoxActualizarBD
+            // 
+            groupBoxActualizarBD.Controls.Add(labelEstadoActualizarBD);
+            groupBoxActualizarBD.Controls.Add(btnActualizarBD);
+            groupBoxActualizarBD.Location = new Point(468, 432);
+            groupBoxActualizarBD.Name = "groupBoxActualizarBD";
+            groupBoxActualizarBD.Size = new Size(576, 77);
+            groupBoxActualizarBD.TabIndex = 6;
+            groupBoxActualizarBD.TabStop = false;
+            groupBoxActualizarBD.Text = "Actualizar Base de Datos";
+            // 
+            // labelEstadoActualizarBD
+            // 
+            labelEstadoActualizarBD.AutoSize = true;
+            labelEstadoActualizarBD.Font = new Font("Consolas", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            labelEstadoActualizarBD.ForeColor = SystemColors.MenuText;
+            labelEstadoActualizarBD.Location = new Point(198, 39);
+            labelEstadoActualizarBD.Name = "labelEstadoActualizarBD";
+            labelEstadoActualizarBD.Size = new Size(49, 15);
+            labelEstadoActualizarBD.TabIndex = 12;
+            labelEstadoActualizarBD.Text = "Estado";
+            // 
+            // btnActualizarBD
+            // 
+            btnActualizarBD.Location = new Point(6, 26);
+            btnActualizarBD.Name = "btnActualizarBD";
+            btnActualizarBD.Size = new Size(179, 38);
+            btnActualizarBD.TabIndex = 11;
+            btnActualizarBD.Text = "Actualizar";
+            btnActualizarBD.UseVisualStyleBackColor = true;
+            btnActualizarBD.Click += btnActualizarBD_Click;
+            // 
             // LabConnect
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1124, 525);
+            ClientSize = new Size(1055, 525);
+            Controls.Add(groupBoxActualizarBD);
+            Controls.Add(groupBox2);
             Controls.Add(groupBoxUltimosDatos);
             Controls.Add(groupBox1);
             Controls.Add(label1);
@@ -264,6 +443,10 @@
             groupBox1.PerformLayout();
             groupBoxUltimosDatos.ResumeLayout(false);
             groupBoxUltimosDatos.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            groupBoxActualizarBD.ResumeLayout(false);
+            groupBoxActualizarBD.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -289,5 +472,20 @@
         private Label labelG2Texto;
         private ListBox listBoxUltimosDatos;
         private Button btnActualizarDatos;
+        private GroupBox groupBox2;
+        private Label label5;
+        private Label label4;
+        private Label label3;
+        private TextBox textBoxRutaEntrada;
+        private ListView listBoxResultados;
+        private Label label7;
+        private Label labelEstadoMatlab;
+        private Button buttonProcesarMatlab;
+        private Button buttonGuardarDatos;
+        private TextBox textBoxRutaResultados;
+        private TextBox textBoxRutaMatlab;
+        private GroupBox groupBoxActualizarBD;
+        private Label labelEstadoActualizarBD;
+        private Button btnActualizarBD;
     }
 }
