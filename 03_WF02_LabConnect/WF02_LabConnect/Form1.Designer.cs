@@ -44,7 +44,12 @@
             labelUsuario = new Label();
             labelhost = new Label();
             label2 = new Label();
+            groupBoxUltimosDatos = new GroupBox();
+            btnActualizarDatos = new Button();
+            listBoxUltimosDatos = new ListBox();
+            labelG2Texto = new Label();
             groupBox1.SuspendLayout();
+            groupBoxUltimosDatos.SuspendLayout();
             SuspendLayout();
             // 
             // linkLabel1
@@ -94,7 +99,7 @@
             groupBox1.Controls.Add(label2);
             groupBox1.Location = new Point(14, 50);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(447, 310);
+            groupBox1.Size = new Size(447, 266);
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Conexión con la base de Datos";
@@ -112,7 +117,7 @@
             // 
             // buttonValidarConexion
             // 
-            buttonValidarConexion.Location = new Point(132, 181);
+            buttonValidarConexion.Location = new Point(254, 181);
             buttonValidarConexion.Name = "buttonValidarConexion";
             buttonValidarConexion.Size = new Size(179, 38);
             buttonValidarConexion.TabIndex = 9;
@@ -127,7 +132,7 @@
             textBoxBaseDatos.Name = "textBoxBaseDatos";
             textBoxBaseDatos.Size = new Size(301, 27);
             textBoxBaseDatos.TabIndex = 8;
-            textBoxBaseDatos.Text = "labconnecct_smc";
+            textBoxBaseDatos.Text = "labconnect_smc";
             // 
             // textBoxContrasena
             // 
@@ -202,11 +207,51 @@
             label2.TabIndex = 0;
             label2.Text = "Ingresa los datos de conexión con la base de datos:";
             // 
+            // groupBoxUltimosDatos
+            // 
+            groupBoxUltimosDatos.Controls.Add(btnActualizarDatos);
+            groupBoxUltimosDatos.Controls.Add(listBoxUltimosDatos);
+            groupBoxUltimosDatos.Controls.Add(labelG2Texto);
+            groupBoxUltimosDatos.Location = new Point(12, 322);
+            groupBoxUltimosDatos.Name = "groupBoxUltimosDatos";
+            groupBoxUltimosDatos.Size = new Size(449, 187);
+            groupBoxUltimosDatos.TabIndex = 4;
+            groupBoxUltimosDatos.TabStop = false;
+            groupBoxUltimosDatos.Text = "Datos de Entrada";
+            // 
+            // btnActualizarDatos
+            // 
+            btnActualizarDatos.Location = new Point(256, 136);
+            btnActualizarDatos.Name = "btnActualizarDatos";
+            btnActualizarDatos.Size = new Size(179, 38);
+            btnActualizarDatos.TabIndex = 11;
+            btnActualizarDatos.Text = "Actualizar";
+            btnActualizarDatos.UseVisualStyleBackColor = true;
+            btnActualizarDatos.Click += btnActualizarDatos_Click;
+            // 
+            // listBoxUltimosDatos
+            // 
+            listBoxUltimosDatos.FormattingEnabled = true;
+            listBoxUltimosDatos.Location = new Point(8, 46);
+            listBoxUltimosDatos.Name = "listBoxUltimosDatos";
+            listBoxUltimosDatos.Size = new Size(427, 84);
+            listBoxUltimosDatos.TabIndex = 1;
+            // 
+            // labelG2Texto
+            // 
+            labelG2Texto.AutoSize = true;
+            labelG2Texto.Location = new Point(8, 23);
+            labelG2Texto.Name = "labelG2Texto";
+            labelG2Texto.Size = new Size(184, 20);
+            labelG2Texto.TabIndex = 0;
+            labelG2Texto.Text = "Últimos datos de entrada:";
+            // 
             // LabConnect
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(900, 450);
+            ClientSize = new Size(1124, 525);
+            Controls.Add(groupBoxUltimosDatos);
             Controls.Add(groupBox1);
             Controls.Add(label1);
             Controls.Add(linkLabel2);
@@ -217,6 +262,8 @@
             Text = "LabConnect";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            groupBoxUltimosDatos.ResumeLayout(false);
+            groupBoxUltimosDatos.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -238,5 +285,9 @@
         private Label labelUsuario;
         private Button buttonValidarConexion;
         private Label labelEstadoConexion;
+        private GroupBox groupBoxUltimosDatos;
+        private Label labelG2Texto;
+        private ListBox listBoxUltimosDatos;
+        private Button btnActualizarDatos;
     }
 }
